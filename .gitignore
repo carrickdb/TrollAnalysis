@@ -1,0 +1,7 @@
+*.DS_Store
+.idea/*
+*.json
+*.odt
+__pycache__/*
+*~
+*.csv
