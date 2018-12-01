@@ -1,8 +1,8 @@
-#!/usr/bin/env python3
+# #!/usr/bin/env python3
 
-import tensorflow as tf
-import numpy as np
-import sklearn.metrics
+# import tensorflow as tf
+#import numpy as np
+#import sklearn.metrics
 import json, datetime, math
 from sklearn import svm
 import datetime
@@ -22,7 +22,8 @@ other ideas:
 
 with open("train_mini.json") as f:
     data = json.load(f)
-    data = data[:50000]
+    # print("number of tweets", len(data))
+
 
 
 split = len(data)//2
@@ -42,20 +43,46 @@ def get_accuracy(predictions, y):
 def create_features(data_set):
     X = []
     y = []
+    unliked = []
+    liked = []
     for d in data_set:
-        date = datetime.strptime(d['tweet_time'], )
-        X.append([int(d['follower_count'])])
+        # date = datetime.strptime(d['tweet_time'], )
+        # int(d['follower_count'])
+        features = [1]
+        if 'https://t.co' in d['tweet_text']:
+            features.append(1)
+        else:
+            features.append(0)
+        features.append(int(d['follower_count']))
+        X.append(features)
         if d['like_count'] == '0':
             y.append(0)
+            # unliked.append(d)
         else:
             y.append(1)
+            # liked.append(d)
+
+    # for liked_sets in [liked, unliked]:
+    #     print("_____________________")
+    #     for d in liked_sets[:10]:
+    #         print("Screen name:", d['user_screen_name'])
+    #         print("Location:", d['user_reported_location'])
+    #         print("Follower count:", d['follower_count'])
+    #         print("Tweet time", d['tweet_time'])
+    #         print("in reply to:", d['in_reply_to_tweetid'])
+    #         print("hashtags:", d['hashtags'])
+    #         print("urls:", d['urls'])
+    #         print("user_mentions:", d['user_mentions'])
+    #         print("tweet text:", d['tweet_text'])
+    #         print("like count:", d['like_count'])
+    #         print()
     return X, y
+
 
 X_train, y_train = create_features(train)
 X_valid, y_valid = create_features(valid)
 
-# try logistic and SVM
-clf = svm.SVC(C=1000, kernel='linear')   # class_weight='balanced'
+clf = svm.SVC(C=1000, kernel='linear', class_weight='balanced')
 print("initialized SVM")
 clf.fit(X_train, y_train)
 print("created model")
@@ -90,12 +117,12 @@ print("validation accuracy:", valid_acc)
 
 """
 # the biggest loser: All but 4 of 1541 tweets with 0 likes!!!
-just a world news twitter feed--no crazy political rants. why did they bother??
 
 total likes in training set 932474
 
 features: followers, num tweets, time since account start, number of exclamation points,
-emojis, hashtags, bag of words, account language, tweet language, whether it has a link or not
+emojis, hashtags, bag of words, account language, tweet language, whether it has a link or not,
+length of tweet
 
 average number of followers for tweets with 0 likes:
 
@@ -105,6 +132,10 @@ train: 0.7790061834165238
 valid: 0.7816434478134545
 
 ___SVM with just follower count as feature___
+training accuracy: 0.771
+validation accuracy: 0.782
+
+__SVM with follower count and https://t.co___
 training accuracy: 0.771
 validation accuracy: 0.782
 
