@@ -3,7 +3,7 @@
 import csv, json, re
 from random import shuffle
 
-filename = "ira_tweets_csv_hashed.csv"
+filename = "/Users/carrickdb/Desktop/ira_tweets_csv_hashed.csv"
 
 """
 0 tweetid
@@ -45,12 +45,13 @@ with open(filename) as f:
     reader = csv.reader(f)
     header = next(reader)
     for row in reader:
-        if not re.findall(r'[А-я]+', row[12]) and row[18]!='true' and row[17] == '':
+        if not re.findall(r'[А-я]+', row[12]) and row[18]!='true' and row[17] == '' and row[11] == 'en' \
+                and 'https://t.co' not in row[12] and row[28] == '':
             data.append(row)
             i += 1
             if i % 100000 == 0:
                 print(i)
-        if i == 1000000:
+        if i == 2000000:
             break
 
 data = [dict(zip(header, d)) for d in data]
@@ -58,8 +59,8 @@ print(len(data))
 shuffle(data)
 
 print("writing to file")
-with open('data.json', 'w') as f:
-    json.dump(data[:200000], f)
+with open('orig_en_noURL_train.json', 'w') as f:
+    json.dump(data[:50000], f)
 
-with open('test.json', 'w') as f:
-    json.dump(data[200000:300000], f)
+with open('orig_en_noURL_test.json', 'w') as f:
+    json.dump(data[50000:75000], f)

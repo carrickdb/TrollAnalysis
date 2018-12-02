@@ -23,9 +23,6 @@ other ideas:
 with open("train_mini.json") as f:
     data = json.load(f)
     # print("number of tweets", len(data))
-
-
-
 split = len(data)//2
 train = data[:split]
 valid = data[split:]
@@ -46,7 +43,6 @@ def create_features(data_set):
     unliked = []
     liked = []
     for d in data_set:
-        # date = datetime.strptime(d['tweet_time'], )
         # int(d['follower_count'])
         features = [1]
         if 'https://t.co' in d['tweet_text']:
@@ -82,7 +78,7 @@ def create_features(data_set):
 X_train, y_train = create_features(train)
 X_valid, y_valid = create_features(valid)
 
-clf = svm.SVC(C=1000, kernel='linear', class_weight='balanced')
+clf = svm.SVC(C=100, kernel='linear', class_weight='balanced')
 print("initialized SVM")
 clf.fit(X_train, y_train)
 print("created model")
