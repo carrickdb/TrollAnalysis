@@ -13,6 +13,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 # age of account
 
+
 with open("orig_en_train.json") as f:
     data = json.load(f)
 
@@ -33,20 +34,21 @@ def process_tweet(tweet):
 
 corpus = []
 for d in train:
-    corpus.append(process_tweet(d['tweet_text']))
+    # corpus.append(process_tweet(d['tweet_text']))
+    corpus.append(d['tweet_text'])
 
-bow = TfidfVectorizer()  # max_features=100
+bow = TfidfVectorizer(max_features=100)  #
 X_train = bow.fit_transform(corpus).toarray()
-svd = TruncatedSVD(n_components=20)
-X_train = svd.fit_transform(X_train)
+# svd = TruncatedSVD(n_components=20)
+# X_train = svd.fit_transform(X_train)
 
 
 corpus = []
 for d in valid:
-    corpus.append(process_tweet(d['tweet_text']))
+    corpus.append(d['tweet_text'])
 
 X_valid = bow.transform(corpus).toarray()
-X_valid = svd.transform(X_valid)
+# X_valid = svd.transform(X_valid)
 
 
 
@@ -63,16 +65,16 @@ X_valid = svd.transform(X_valid)
 #                 else:
 #                     hashtags[tag] = [like_count]
 #
-# account_likes = {}
-# for d in train:
-#     user = d['userid']
-#     if user in account_likes:
-#         account_likes[user].append(int(d['like_count']))
-#     else:
-#         account_likes[user] = [int(d['like_count'])]
-#
-# for user, likes in account_likes.items():
-#     account_likes[user] = statistics.median(likes)
+account_likes = {}
+for d in train:
+    user = d['userid']
+    if user in account_likes:
+        account_likes[user].append(int(d['like_count']))
+    else:
+        account_likes[user] = [int(d['like_count'])]
+
+for user, likes in account_likes.items():
+    account_likes[user] = statistics.mean(likes)
 #
 #
 # popular_hashtags = {'sports': 0, 'politics': 1, 'local': 2, 'world': 3, 'news': 4, 'SanDiego': 5, 'Syria': 6, \
@@ -94,11 +96,11 @@ def get_features(d):
     #         ht_index = popular_hashtags[ht]
     #         hashtag_features[ht_index] = 1
     # features.extend(hashtag_features)
-    # user =  d['userid']
-    # if user in account_likes:
-    #     features.append(account_likes[user])
-    # else:
-    #     features.append(0)
+    user =  d['userid']
+    if user in account_likes:
+        features.append(account_likes[user])
+    else:
+        features.append(0)
 
     return features
 
@@ -141,7 +143,7 @@ mean likes and hashtag popularity:
 0.82156
 0.82196
 
-follower count, time, hashtag popularity, mean tweets
+follower count, time, hashtag popularity, mean likes
 0.81932
 0.81964
 
@@ -170,9 +172,15 @@ follower count, time, popular hashtags, median tweets, URLs
 BOW with PCA 10 features
 BOW top 10 words
 
-BOW with PCA
+mean likes and top 100 words (with hashtags):
+0.78672
+0.78828
 
-BOW top 100 words:
+BOW top 100 words (with hashtags):
+0.78672
+0.78828
+
+BOW top 100 words (processed):
 0.78792
 0.78504
 

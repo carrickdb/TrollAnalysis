@@ -140,6 +140,15 @@ for ht in curr_hashtags:  # 1 if using a popular hashtag, 0 else
             ht_feature += 1
 features.append(ht_feature)
 
+if d['tweet_text'] in tweets:
+    features.append(0)
+    old_likes = statistics.median(tweets[d['tweet_text']])
+    features.append(old_likes)
+else:
+    features.append(1)
+    features.append(0)
+
+
 """
 All languages except Russian:
 

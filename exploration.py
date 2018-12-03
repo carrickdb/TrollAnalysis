@@ -3,9 +3,9 @@
 import json, statistics
 from pprint import pprint
 from collections import defaultdict
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
-train_file = "orig_content_train.json"
+train_file = "orig_en_train.json"
 # valid_file = "init_valid.json"
 
 """
@@ -20,10 +20,6 @@ Are people with like 0 followers doing the RTing?
 number of times a user repeated one of their own tweets verbatim
 likes to time
 """
-
-
-# with open(valid_file) as f:
-#
 
 with open(train_file) as f:
     tweets = json.load(f)
@@ -44,15 +40,17 @@ RT_likes = []
 orig_content_likes = []
 RT_RTs = []
 orig_content_RTs = []
-# most_successful_tweet = None
-# highest_num_likes = 0
+most_successful_tweet = None
+highest_num_likes = 0
 RTd_users = 0
 tweet_text_repeaters = {}
 tweet_text_counts = defaultdict(int)
 likes = []
 num_likes_RT = 0
 languages = defaultdict(int)
+unique_tweets = defaultdict(int)
 for tweet in tweets:
+    unique_tweets[tweet['tweet_text']] += 1
     userid = tweet['userid']
     if userid not in accounts:
         accounts[userid] = {}
@@ -67,11 +65,11 @@ for tweet in tweets:
         accounts[userid]['num_tweets'] += 1
     if tweet['like_count']:
         num_likes = int(tweet['like_count'])
-        # if num_likes > 25000:
-        #     print(tweet['tweet_text'], ":", num_likes)
-        # if num_likes > highest_num_likes:
-        #     highest_num_likes = num_likes
-        #     most_successful_tweet = tweet['tweet_text']
+        if num_likes > 25000:
+            print(tweet['tweet_text'], ":", num_likes)
+        if num_likes > highest_num_likes:
+            highest_num_likes = num_likes
+            most_successful_tweet = tweet['tweet_text']
         total_likes += num_likes
         if num_likes == 0:
             zero_likes += 1
@@ -115,110 +113,110 @@ for tweet in tweets:
         replies += int(tweet['reply_count'])
 
 
-for language, count in languages.items():
-    print(language, count)
+# for language, count in languages.items():
+#     print(language, count)
 
 
 
-# likes = sorted(likes)
-# threshold = 0
-# for i in range(len(likes)):
-#     if likes[i] > 1000:
-#         threshold = i
-#         break
-# unliked = likes[:threshold]
-# liked = likes[threshold:]
-# # plt.hist(unliked)
-# # plt.show()
-#
-# bins = [1000]
-# more_bins = [i*1000 for i in range(1, 11)]
-# bins.extend(more_bins)
-# plt.hist(liked, bins=more_bins)
-# axes = plt.gca()
-# axes.set_ylim([0,150])
-# plt.show()
-# tally = []
-# num_repeaters = 0
-# num_repeats = 0
-# max_repeats = 0
-# most_repeated = None
-# for repeated_text, repeaters in tweet_text_repeaters.items():
-#     for repeater, count in repeaters.items():
-#         if count > 1:
-#             if count > max_repeats:
-#                 max_repeats = count
-#                 most_repeated = repeated_text
-#             num_repeats += count - 1
-#             num_repeaters += 1
-#             tally.append(count)
-# print(most_repeated)
-# print(max_repeats)
-# print(num_repeaters)
-# print(num_repeats)
-# print("\tMax:", max(tally))
-# print("\tMin:", min(tally))
-# print("\tMean:", statistics.mean(tally))
-# print("\tMedian:", statistics.median(tally))
-# print("\tStandard deviation:", statistics.stdev(tally))
-# total_copies = 0
-# for tweet_t, count in tweet_text_counts.items():
-#     if count > 1:
-#         total_copies += count
-# print(total_copies)
-# copycat_counts = defaultdict(int)
-# copy_counts = []
-# for tweet_text, copycats in tweet_text_counts.items():
-#     if len(copycats) > 1:
-#         for copycat in copycats:
-#             copycat_counts[copycat] += 1
-#         copy_counts.append(len(copycats))
-# copycat_count_list = [x for x in copycat_counts.values()]
-# for tally in [copy_counts, copycat_count_list]:
-#     print("\tMax:", max(tally))
-#     print("\tMin:", min(tally))
-#     print("\tMean:", statistics.mean(tally))
-#     print("\tMedian:", statistics.median(tally))
-#     print("\tStandard deviation:", statistics.stdev(tally))
-#     print()
-# print(RTd_users/RT_count)
-# for unique_tweet, count in unique_tweets.items():
-#     if count > 1:
-#         print(count)
-# tweets_per_account = []
-# for account, account_data in accounts.items():
-#     tweets_per_account.append(account_data['num_tweets'])
-# for tally in [RT_RTs, orig_content_RTs]:
-#     print("\tMax:", max(tally))
-#     print("\tMin:", min(tally))
-#     print("\tMean:", statistics.mean(tally))
-#     print("\tMedian:", statistics.median(tally))
-#     print("\tStandard deviation:", statistics.stdev(tally))
-#     print()
-# followers = []
-# following = []
-# for account, account_data in accounts.items():
-#     followers.append(account_data['follower_count'])
-#     following.append(account_data['following_count'])
-#
-# print("percentage that are themselves replies:", is_reply/num_tweets)
-# print("no RT data:", no_RT_data)
-# print("no_like_data:", no_like_data)
-# print("Orig content stats:")
-# print("\tMax:", max(orig_content_likes))
-# print("\tMedian:", statistics.median(orig_content_likes))
-# print("\tStandard deviation:", statistics.stdev(orig_content_likes))
-# print("\nRT stats:")
-# print("\tnum stats on RTs", len(RT_likes))
-# print("\tMax:", max(RT_likes))
-# print("\tMedian:", statistics.median(RT_likes))
-# print("\tStandard deviation:", statistics.stdev(RT_likes))
-# print("average # of likes:", total_likes/num_tweets)
-# print("average # of replies:", replies/num_tweets)
-# # print("number of separate accounts:", len(accounts))
-# print("percentage that are retweets:", RT_count/num_tweets)
-# print("percentage of tweets with 0 likes:", zero_likes/num_tweets)
-# print("percentage of tweets with 0 RTs:", zero_RTs/num_tweets)
+likes = sorted(likes)
+threshold = 0
+for i in range(len(likes)):
+    if likes[i] > 1000:
+        threshold = i
+        break
+unliked = likes[:threshold]
+liked = likes[threshold:]
+plt.hist(unliked)
+plt.show()
+
+bins = [1000]
+more_bins = [i*1000 for i in range(1, 11)]
+bins.extend(more_bins)
+plt.hist(liked, bins=more_bins)
+axes = plt.gca()
+axes.set_ylim([0,150])
+plt.show()
+tally = []
+num_repeaters = 0
+num_repeats = 0
+max_repeats = 0
+most_repeated = None
+for repeated_text, repeaters in tweet_text_repeaters.items():
+    for repeater, count in repeaters.items():
+        if count > 1:
+            if count > max_repeats:
+                max_repeats = count
+                most_repeated = repeated_text
+            num_repeats += count - 1
+            num_repeaters += 1
+            tally.append(count)
+print(most_repeated)
+print(max_repeats)
+print(num_repeaters)
+print(num_repeats)
+print("\tMax:", max(tally))
+print("\tMin:", min(tally))
+print("\tMean:", statistics.mean(tally))
+print("\tMedian:", statistics.median(tally))
+print("\tStandard deviation:", statistics.stdev(tally))
+total_copies = 0
+for tweet_t, count in tweet_text_counts.items():
+    if count > 1:
+        total_copies += count
+print(total_copies)
+copycat_counts = defaultdict(int)
+copy_counts = []
+for tweet_text, copycats in tweet_text_counts.items():
+    if len(copycats) > 1:
+        for copycat in copycats:
+            copycat_counts[copycat] += 1
+        copy_counts.append(len(copycats))
+copycat_count_list = [x for x in copycat_counts.values()]
+for tally in [copy_counts, copycat_count_list]:
+    print("\tMax:", max(tally))
+    print("\tMin:", min(tally))
+    print("\tMean:", statistics.mean(tally))
+    print("\tMedian:", statistics.median(tally))
+    print("\tStandard deviation:", statistics.stdev(tally))
+    print()
+print(RTd_users/RT_count)
+for unique_tweet, count in unique_tweets.items():
+    if count > 1:
+        print(count)
+tweets_per_account = []
+for account, account_data in accounts.items():
+    tweets_per_account.append(account_data['num_tweets'])
+for tally in [RT_RTs, orig_content_RTs]:
+    print("\tMax:", max(tally))
+    print("\tMin:", min(tally))
+    print("\tMean:", statistics.mean(tally))
+    print("\tMedian:", statistics.median(tally))
+    print("\tStandard deviation:", statistics.stdev(tally))
+    print()
+followers = []
+following = []
+for account, account_data in accounts.items():
+    followers.append(account_data['follower_count'])
+    following.append(account_data['following_count'])
+
+print("percentage that are themselves replies:", is_reply/num_tweets)
+print("no RT data:", no_RT_data)
+print("no_like_data:", no_like_data)
+print("Orig content stats:")
+print("\tMax:", max(orig_content_likes))
+print("\tMedian:", statistics.median(orig_content_likes))
+print("\tStandard deviation:", statistics.stdev(orig_content_likes))
+print("\nRT stats:")
+print("\tnum stats on RTs", len(RT_likes))
+print("\tMax:", max(RT_likes))
+print("\tMedian:", statistics.median(RT_likes))
+print("\tStandard deviation:", statistics.stdev(RT_likes))
+print("average # of likes:", total_likes/num_tweets)
+print("average # of replies:", replies/num_tweets)
+# print("number of separate accounts:", len(accounts))
+print("percentage that are retweets:", RT_count/num_tweets)
+print("percentage of tweets with 0 likes:", zero_likes/num_tweets)
+print("percentage of tweets with 0 RTs:", zero_RTs/num_tweets)
 
 
 
